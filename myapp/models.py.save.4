@@ -1,0 +1,309 @@
+from __future__ import unicode_literals
+from django.contrib import admin
+from django.db import models
+
+# Create your models here.  
+class User(models.Model):
+    p_id = models.AutoField(primary_key=True)
+    name = models.TextField(blank=True, null=True)
+    number  = models.TextField(blank=True, null=True)
+    consumerID  = models.TextField(blank=True, null=True)
+    email  = models.TextField(blank=True, null=True)
+    referredFrom  = models.TextField(blank=True, null=True)
+    level  = models.TextField(blank=True, null=True)
+    regId = models.TextField(blank=True, null=True)
+    fcmToken  = models.TextField(blank=True, null=True)
+    versionName  = models.TextField(blank=True, null=True)
+    androidVersion = models.TextField(blank=True, null=True)
+    brandName = models.TextField(blank=True, null=True)
+    modelName  = models.TextField(blank=True, null=True)
+    loginVersionName  = models.TextField(blank=True, null=True)
+    userType  = models.TextField(blank=True, null=True)
+    referralCode  = models.TextField(blank=True, null=True)
+    referralCount = models.TextField(blank=True, null=True)
+    class Meta:
+        managed = False
+        db_table = 'User'
+
+#admin.site.register(User) 
+class Userfinal(models.Model):
+    p_id = models.AutoField(primary_key=True)
+    id = models.TextField(blank=True, null=True)
+    level = models.TextField(blank=True, null=True)
+    name = models.TextField(blank=True, null=True)
+    email = models.TextField(blank=True, null=True)
+    consumerid = models.TextField(blank=True, null=True)
+    created_at = models.TextField(blank=True, null=True)
+    perishable_token = models.TextField(blank=True, null=True)
+    session_token = models.TextField(blank=True, null=True)
+    regid = models.TextField(blank=True, null=True)
+    username = models.TextField(blank=True, null=True)
+    updated_at = models.TextField(blank=True, null=True)
+    totalreferalcount = models.TextField(blank=True, null=True)
+    referalused = models.TextField(blank=True, null=True)
+
+    column_12 = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'userfinal'
+
+
+
+class Expenseparticipants(models.Model):
+    p_id = models.AutoField(primary_key=True)
+
+    id = models.TextField(blank=True, null=True)
+    share = models.DecimalField(max_digits=21, decimal_places=15, blank=True, null=True)
+    object = models.TextField(blank=True, null=True)
+    acl = models.TextField(blank=True, null=True)
+    rperm = models.TextField(blank=True, null=True)
+    created_at = models.TextField(blank=True, null=True)
+    wperm = models.TextField(blank=True, null=True)
+#    field_id = models.TextField(db_column='_id', blank=True, null=True)  # Field renamed because it started with '_'.
+    settled = models.TextField(blank=True, null=True)
+    updated_at = models.TextField(blank=True, null=True)
+    participantname = models.TextField(blank=True, null=True)
+    participant = models.TextField(blank=True, null=True)
+    saved = models.IntegerField(blank=True, null=True)
+    deleted = models.IntegerField(blank=True, null=True)
+    id1 = models.TextField(blank=True, null=True)
+
+    comments = models.IntegerField(blank=True, null=True)
+
+    column_14 = models.IntegerField(blank=True, null=True)
+    def __unicode__(self):
+     return self.object
+    class Meta:
+        managed = False
+        db_table = 'expenseparticipants'
+
+
+class Expensedetails(models.Model):
+    p_id = models.AutoField(primary_key=True)
+    id1 = models.TextField( blank=True, null=True)  # Field renamed because it started with '_'.
+    description = models.TextField(blank=True, null=True)
+    amount = models.DecimalField(max_digits=7, decimal_places=2, blank=True, null=True)
+    object = models.TextField(blank=True, null=True)
+    addedby = models.TextField(blank=True, null=True)
+    shares = models.TextField(blank=True, null=True)
+    persons = models.TextField(blank=True, null=True)
+    distribution = models.TextField(blank=True, null=True)
+    owner = models.TextField(blank=True, null=True)
+    date = models.TextField(blank=True, null=True)
+    personsNames =  models.TextField(blank=True, null=True)
+    sharesValues =  models.TextField(blank=True, null=True)
+    expenseVersion =  models.TextField(blank=True, null=True)
+    syncedString =  models.TextField(blank=True, null=True)
+    deleted =  models.TextField(blank=True, null=True)
+    groupDeletedBy =  models.TextField(blank=True, null=True)
+    def __unicode__(self):
+     return self.object
+ 
+    class Meta:
+        managed = False
+        db_table = 'expensedetails'
+
+class Runningexpenses(models.Model):
+    p_id = models.AutoField(primary_key=True)
+#    Expenseparticipants = models.ForeignKey(Expenseparticipants, unique=True)
+
+    id = models.TextField(blank=True, null=True)
+    rperm = models.TextField(blank=True, null=True)
+    saved = models.IntegerField(blank=True, null=True)
+    agenda = models.TextField(blank=True, null=True)
+    name = models.TextField(blank=True, null=True)
+    contreemoney = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    date = models.DateField(blank=True, null=True)
+    updated_at = models.TextField(blank=True, null=True)
+    field_created_at = models.IntegerField(db_column='_created_at', blank=True, null=True)  # Field renamed because it started with '_'.
+    acl = models.TextField(blank=True, null=True)
+    wperm = models.TextField(blank=True, null=True)
+    id1 = models.TextField(db_column='id1', blank=True, null=True)  # Field renamed because it started with '_'.
+    def __unicode__(self):
+     return self.id1
+
+    class Meta:
+        managed = False
+        db_table = 'runningexpenses'
+
+  
+class Updatelist(models.Model):
+    p_id = models.AutoField(primary_key=True)
+
+    id = models.TextField(blank=True, null=True)
+    wperm = models.TextField(blank=True, null=True)
+    id1 = models.TextField(blank=True, null=True)
+    object = models.TextField(blank=True, null=True)
+    updated_at = models.TextField(blank=True, null=True)
+    created_at = models.TextField(blank=True, null=True)
+    dist = models.TextField(blank=True, null=True)
+    type = models.TextField(blank=True, null=True)
+    expenseid = models.TextField(blank=True, null=True)
+    new_val = models.TextField(blank=True, null=True)
+    rperm = models.TextField(blank=True, null=True)
+    acl = models.TextField(blank=True, null=True)
+    date = models.TextField(blank=True, null=True)
+    old_val = models.TextField(blank=True, null=True)
+    column_15 = models.IntegerField(blank=True, null=True)
+#    p_id = models.AutoField()
+    def __unicode__(self):
+     return self.type
+
+
+    class Meta:
+        managed = False
+        db_table = 'updatelist'
+class Fcm(models.Model):
+    instance_token = models.TextField(blank=True, null=True)
+    p_id = models.AutoField(primary_key=True)
+    def __unicode__(self):
+     return self.instance_token
+
+    class Meta:
+        managed = False
+        db_table = 'FCM'
+
+class Merchantofferings(models.Model):
+    p_id = models.AutoField(primary_key=True)
+
+    id = models.TextField(blank=True, null=True)
+    rperm = models.TextField(blank=True, null=True)
+    itemslist = models.TextField(blank=True, null=True)
+    created_at = models.TextField(blank=True, null=True)
+    acl = models.TextField(blank=True, null=True)
+    wperm = models.TextField(blank=True, null=True)
+    updated_at = models.TextField(blank=True, null=True)
+    location = models.TextField(blank=True, null=True)
+    merchantname = models.TextField(blank=True, null=True)
+    available = models.TextField(blank=True, null=True)
+    itemprice = models.TextField(blank=True, null=True)
+    merchantnumber = models.TextField(blank=True, null=True)
+    conveniencefee = models.TextField(blank=True, null=True)
+    netamount = models.IntegerField(blank=True, null=True)
+    settledamount = models.IntegerField(blank=True, null=True)
+    column_16 = models.IntegerField(blank=True, null=True)
+#    p_id = models.AutoField()
+
+    class Meta:
+        managed = False
+        db_table = 'merchantofferings'
+class Referral(models.Model):
+    p_id = models.AutoField(primary_key=True)
+
+    id = models.TextField(blank=True, null=True)
+    referralcount = models.IntegerField(blank=True, null=True)
+    rperm = models.TextField(blank=True, null=True)
+    referralcode = models.TextField(blank=True, null=True)
+    acl = models.TextField(blank=True, null=True)
+    wperm = models.TextField(blank=True, null=True)
+    created_at = models.TextField(blank=True, null=True)
+    username = models.TextField(blank=True, null=True)
+    updated_at = models.TextField(blank=True, null=True)
+    column_10 = models.TextField(blank=True, null=True)
+    totalreferalcount = models.TextField(blank=True, null=True)
+    referalused = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'referral'
+class Userorder(models.Model):
+    p_id = models.AutoField(primary_key=True)
+
+    eta = models.CharField(max_length=11, blank=True, null=True)
+    amountitems = models.CharField(max_length=5, blank=True, null=True)
+    available = models.CharField(max_length=5, blank=True, null=True)
+    category = models.CharField(max_length=6, blank=True, null=True)
+    confreestatus = models.CharField(max_length=2, blank=True, null=True)
+    createdat = models.CharField(max_length=24, blank=True, null=True)
+    date = models.TextField(blank=True, null=True)
+    itemprice = models.CharField(max_length=8, blank=True, null=True)
+    itemslist = models.CharField(max_length=34, blank=True, null=True)
+    merchantname = models.CharField(max_length=11, blank=True, null=True)
+    merchantnumber = models.TextField(blank=True, null=True)
+    netprice = models.IntegerField(blank=True, null=True)
+    objectid = models.CharField(max_length=10, blank=True, null=True)
+    orderid = models.CharField(max_length=24, blank=True, null=True)
+    orderno = models.CharField(max_length=2, blank=True, null=True)
+    status = models.IntegerField(blank=True, null=True)
+    updatedat = models.CharField(max_length=24, blank=True, null=True)
+    username = models.CharField(max_length=9, blank=True, null=True)
+    usernumber = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'userorder'
+
+
+class Otp(models.Model):
+    mobileNumber = models.TextField(blank=True, null=True)
+    otp = models.TextField(blank=True, null=True)
+    p_id = models.AutoField(primary_key=True)
+
+    class Meta:
+        managed = False
+        db_table = 'otp'
+    def __unicode__(self):
+     return self.otp
+
+
+class Pushnotification(models.Model):
+    p_id = models.AutoField(primary_key=True)
+    title = models.TextField(blank=True, null=True)
+    content = models.TextField(blank=True, null=True)
+    information = models.TextField(blank=True, null=True)
+    time = models.TextField(blank=True, null=True)
+    notificationID = models.TextField(blank=True, null=True)  # Field name made lowercase.
+    type = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'pushNotification'
+
+class Merchant(models.Model):
+    name = models.TextField(blank=True, null=True)
+    number = models.TextField(blank=True, null=True)
+    consumerId = models.TextField( blank=True, null=True)  # Field name made lowercase.
+    email = models.TextField(blank=True, null=True)
+    referredFrom = models.TextField( blank=True, null=True)  # Field name made lowercase.
+    level = models.TextField(blank=True, null=True)
+    regId = models.TextField(blank=True, null=True)  # Field name made lowercase.
+    fcmToken = models.TextField(blank=True, null=True)  # Field name made lowercase.
+    versionName = models.TextField(blank=True, null=True)  # Field name made lowercase.
+    androidVersion = models.TextField( blank=True, null=True)  # Field name made lowercase.
+    brandName = models.TextField(blank=True, null=True)  # Field name made lowercase.
+    modelName = models.TextField(blank=True, null=True)  # Field name made lowercase.
+    loginVersionName = models.TextField( blank=True, null=True)  # Field name made lowercase.
+    userType = models.TextField(blank=True, null=True)  # Field name made lowercase.
+    referralCode = models.TextField( blank=True, null=True)  # Field name made lowercase.
+    referralCount = models.TextField( blank=True, null=True)  # Field name made lowercase.
+    p_id = models.IntegerField()
+    isveriFied = models.TextField(blank=True, null=True)  # Field name made lowercase.
+    location = models.TextField(blank=True, null=True)
+    paymentType = models.TextField(blank=True, null=True)  # Field name made lowercase.
+    status = models.TextField(blank=True, null=True)
+    itemsList = models.TextField( blank=True, null=True)  # Field name made lowercase.
+    convenienceFee = models.TextField(blank=True, null=True))  # Field name made lowercase.
+    itemsPrice = models.TextField( blank=True, null=True)  # Field name made lowercase.
+    available = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'Merchant'
+
+class Dynamicvalue(models.Model):
+    defaultconfreevalue = models.TextField(db_column='defaultConfreeValue', blank=True, null=True)  # Field name made lowercase.
+    maxvalue = models.TextField(db_column='maxValue', blank=True, null=True)  # Field name made lowercase.
+    contactnumber = models.TextField(db_column='contactNumber', blank=True, null=True)  # Field name made lowercase.
+    updateinfo = models.TextField(db_column='updateInfo', blank=True, null=True)  # Field name made lowercase.
+    maxBankTransactiononeGo = models.TextField(db_column='maxBankTransactionOneGo', blank=True, null=True)  # Field name made lowercase.
+    bankTransactionCharges = models.TextField(db_column='bankTransactionCharges', blank=True, null=True)  # Field name made lowercase.
+    maxfreeBankTransaction = models.TextField(db_column='maxFreeBankTransaction', blank=True, null=True)  # Field name made lowercase.
+    minFixedBankTransferCharges = models.TextField(blank=True, null=True)  # Field name made lowercase.
+    p_id = models.AutoField()
+
+    class Meta:
+        managed = False
+        db_table = 'DynamicValue'
+
+

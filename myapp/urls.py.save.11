@@ -1,0 +1,48 @@
+
+from django.conf.urls import url 
+from . import views
+import myapp.views
+from myapp import views
+#from django.views.generic import TemplateView
+urlpatterns = [
+        url(r'^fcmapi/(?P<tokenid>.+)',views.FCMAPI),
+        url(r'^fcmid1/(?P<message_title>.+)/(?P<message_body>.+)/', views.FCMDATA1, name='FCMDATA1'),
+        url(r'^fcmid/(?P<userNumber>.+)/(?P<orderID>.+)/(?P<merchantName>.+)/(?P<merchantNumber>.+)/(?P<userName>.+)/(?P<itemsList>.+)/(?P<netPrice>.+)/(?P<itemPrice>.+)/(?P<orderNo>.+)/(?P<status>.+)/(?P<available>.+)/(?P<amountItems>.+)/(?P<confreeStatus>.+)/(?P<ETA>.+)/(?P<category>.+)/(?P<date>.+)/(?P<merchantFcm>.+)/', views.FCMDATA, name='FCMDATA'),
+        url(r'^fcmapi2/(?P<data>.+)/(?P<fcmid>.+)/(?P<order_id>.+)/',views.fcmapi2),
+        
+        url(r'^api8/(?P<murchant_number>.+)/',views.API8),
+        url(r'^api11/(?P<user_number>.+)/(?P<order_id>.+)/',views.API11),
+        url(r'^walletAPI', views.walletAPI, name='walletAPI'),
+        url(r'^expenseAddAPI', views.expenseAddAPI, name='expenseAddAPI'),
+        url(r'^expenseUpdateAPI', views.expenseUpdateAPI, name='expenseUpdateAPI'),
+        url(r'^groupAddAPI', views.groupAddAPI, name='groupAddAPI'),
+        url(r'^groupUpdateAPI', views.groupUpdateAPI, name='groupUpdateAPI'),
+        url(r'^expenseDeleteAPI', views.expenseDeleteAPI, name='expenseDeleteAPI'),
+        url(r'^groupDeleteAPI', views.groupDeleteAPI, name='groupDeleteAPI'),
+        url(r'^verifyOTPMessageAPI', views.verifyOTPMessageAPI, name='verifyOTPMessageAPI'),
+        url(r'^sendOTPMessageAPI', views.sendOTPMessageAPI, name='sendOTPMessageAPI'),     
+        url(r'^refreshAPI', views.refreshAPI, name='refreshAPI'),
+        url(r'^verifyReferralAPI', views.verifyReferralAPI, name='verifyReferralAPI'),
+        url(r'^remindAPI', views.remindAPI, name='remindAPI'),
+        url(r'^updateUserAPI', views.updateUserAPI, name='updateUserAPI'),
+        url(r'^deleteUser', views.deleteUser, name='deleteUser'),
+        url(r'^DeleteExpenseAllVersions',views.DeleteExpenseAllVersions, name = 'DeleteExpenseAllVersions'),
+        url(r'^deleteExpense',views.deleteExpense, name = 'deleteExpense'),
+        url(r'^sync',views.sync, name = 'sync'),
+        url(r'^deleteAllExpenses',views.deleteAllExpenses, name = 'deleteAllExpenses'),
+        url(r'^sendPushNotification',views.sendPushNotification, name = 'sendPushNotification'),
+        url(r'^updateDynamicValue',views.updateDynamicValue, name = 'updateDyanamicValue'),
+        url(r'^getAllMerchantsAPI',views.getAllMerchantsAPI, name = 'getAllMerchantsAPI'),
+        url(r'^getUserOrderAPI',views.getUserOrderAPI, name = 'getUserOrderAPI'),
+        url(r'^merchantOfringAPI',views.merchantOfringAPI, name = 'merchantOfringAPI'),
+        url(r'^placeOrderAPI',views.placeOrderAPI, name = 'placeOrderAPI'),
+        url(r'^updateOrderAPI',views.updateOrderAPI, name = 'updateOrderAPI'),
+        url(r'^migration',views.migration, name = 'migration'),     
+        url(r'^testAPI',views.testAPI, name = 'testAPI'),
+        url(r'^pushDynamicValues',views.pushDynamicValues, name = 'pushDynamicValues'),
+        url(r'^amicValues',views.pushDynamicValues, name = 'pushDynamicValues'),
+        url(r'^getUserMerchantOrderAPI'',views.getUserMerchantOrderAPI, name = 'getUserMerchantOrderAPI'),
+
+]
+
+

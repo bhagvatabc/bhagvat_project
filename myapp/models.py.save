@@ -1,0 +1,120 @@
+from __future__ import unicode_literals
+from django.contrib import admin
+from django.db import models
+
+# Create your models here.  
+class User(models.Model):
+    p_id = models.AutoField(primary_key=True)
+    id = models.TextField(blank=True, null=True)
+    cardinality_csvlevel = models.TextField(blank=True, null=True)
+    name = models.TextField(blank=True, null=True)
+    email = models.TextField(blank=True, null=True)
+    consumerid = models.TextField(blank=True, null=True)
+    created_at = models.TextField(blank=True, null=True)
+    perishable_token = models.TextField(blank=True, null=True)
+    cardinality_csv_session_token = models.TextField(blank=True, null=True)
+    cardinality_csvregid = models.TextField(blank=True, null=True)
+    cardinality_csvusername = models.TextField(blank=True, null=True)
+    cardinality_csv_updated_at = models.TextField(blank=True, null=True)
+    hashed_password = models.TextField(blank=True, null=True)
+    referredfrom = models.TextField(blank=True, null=True)
+    column_14 = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = '_user'
+#admin.site.register(User) 
+class Userfinal(models.Model):
+    p_id = models.AutoField(primary_key=True)
+    id = models.TextField(blank=True, null=True)
+    level = models.TextField(blank=True, null=True)
+    name = models.TextField(blank=True, null=True)
+    email = models.TextField(blank=True, null=True)
+    consumerid = models.TextField(blank=True, null=True)
+    created_at = models.TextField(blank=True, null=True)
+    perishable_token = models.TextField(blank=True, null=True)
+    session_token = models.TextField(blank=True, null=True)
+    regid = models.TextField(blank=True, null=True)
+    username = models.TextField(blank=True, null=True)
+    updated_at = models.TextField(blank=True, null=True)
+    column_12 = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'userfinal'
+
+
+
+class Expenseparticipants(models.Model):
+    p_id = models.AutoField(primary_key=True)
+
+    id = models.TextField(blank=True, null=True)
+    share = models.DecimalField(max_digits=21, decimal_places=15, blank=True, null=True)
+    object = models.TextField(blank=True, null=True)
+    acl = models.TextField(blank=True, null=True)
+    rperm = models.TextField(blank=True, null=True)
+    created_at = models.TextField(blank=True, null=True)
+    wperm = models.TextField(blank=True, null=True)
+    field_id = models.TextField(db_column='_id', blank=True, null=True)  # Field renamed because it started with '_'.
+    settled = models.TextField(blank=True, null=True)
+    updated_at = models.TextField(blank=True, null=True)
+    participantname = models.TextField(blank=True, null=True)
+    participant = models.TextField(blank=True, null=True)
+    saved = models.IntegerField(blank=True, null=True)
+    column_14 = models.IntegerField(blank=True, null=True)
+    def __unicode__(self):
+     return self.question.object
+    class Meta:
+        managed = False
+        db_table = 'expenseparticipants'
+
+
+class Expensedetails(models.Model):
+    p_id = models.AutoField(primary_key=True)
+
+    id = models.CharField(max_length=10, blank=True, null=True)
+    created_at = models.TextField(blank=True, null=True)
+    field_id = models.TextField(db_column='_id', blank=True, null=True)  # Field renamed because it started with '_'.
+    description = models.TextField(blank=True, null=True)
+    wperm = models.TextField(blank=True, null=True)
+    acl = models.TextField(blank=True, null=True)
+    amount = models.DecimalField(max_digits=7, decimal_places=2, blank=True, null=True)
+    updated_at = models.TextField(blank=True, null=True)
+    object = models.TextField(blank=True, null=True)
+    addedby = models.TextField(blank=True, null=True)
+    shares = models.TextField(blank=True, null=True)
+    rperm = models.TextField(blank=True, null=True)
+    persons = models.TextField(blank=True, null=True)
+    distribution = models.TextField(blank=True, null=True)
+    owner = models.TextField(blank=True, null=True)
+    date = models.DateField(blank=True, null=True)
+    column_17 = models.IntegerField(blank=True, null=True)
+    def __unicode__(self):
+     return self.question.object
+
+    class Meta:
+        managed = False
+        db_table = 'expensedetails'
+
+class Runningexpenses(models.Model):
+    p_id = models.AutoField(primary_key=True)
+#    Expenseparticipants = models.ForeignKey(Expenseparticipants, unique=True)
+
+    id = models.TextField(blank=True, null=True)
+    rperm = models.TextField(blank=True, null=True)
+    saved = models.IntegerField(blank=True, null=True)
+    agenda = models.TextField(blank=True, null=True)
+    name = models.TextField(blank=True, null=True)
+    contreemoney = models.DecimalField(max_digits=6, decimal_places=2, blank=True, null=True)
+    date = models.DateField(blank=True, null=True)
+    updated_at = models.TextField(blank=True, null=True)
+    field_created_at = models.IntegerField(db_column='_created_at', blank=True, null=True)  # Field renamed because it started with '_'.
+    acl = models.TextField(blank=True, null=True)
+    wperm = models.TextField(blank=True, null=True)
+    id1 = models.TextField(db_column='id1', blank=True, null=True)  # Field renamed because it started with '_'.
+    def __unicode__(self):
+     return self.question.id1
+
+    class Meta:
+        managed = False
+        db_table = 'runningexpenses'

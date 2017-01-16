@@ -1,0 +1,63 @@
+from django.shortcuts import render
+
+# Create your views here.
+from django.core import serializers
+from django.http import HttpResponse
+from django.shortcuts import render
+from django.shortcuts import render_to_response
+from myapp.models import *
+import myapp.views
+from myapp.views import *
+import json
+#import pyotp
+import os
+import sys
+from urllib2 import urlopen, HTTPError
+import urllib
+from urllib2 import Request, urlopen, URLError
+import requests
+from requests import *
+#from django.http import JsonResponse
+def hello(request):
+        #template = loader.get_template("test.html")
+    #return HttpResponse(template.rendoer())
+    return HttpResponse("jjjjj")
+    #return ('test.html')
+
+def detaill(request,store_id,message):
+
+ mobile_number = request.GET.get('', store_id)
+ #message = "Hello User, we are sorry that you faced issues with payments. It is resolved in our new update https://goo.gl/sX2Be5 #Letscontree"
+ message =request.GET.get('', message)
+ a= str(mobile_number)
+ print message
+ url = ("http://alerts.solutionsinfini.com/api/v3/index.php?method=sms&api_key=A2da30c3f0e3f933485c8a7545dcaf895&to="+mobile_number+"&sender=Contri&message="+message)
+#os.system('php -f url')
+ t =requests.get(url)
+ print t.text
+ print "messsage sent"
+ return HttpResponse("message sent on this number"+ " " +a)
+
+def detaill2(request,store_id,message):
+    mobile_number = request.GET.get('', store_id)
+    message =request.GET.get('', message)
+    print mobile_number
+    print message
+    d ={'mobile_number':mobile_number,'message':message}
+    a= json.dumps(d)
+    return HttpResponse(a)
+def test(request):
+   
+  #  data=  User.objects.all()
+   #for i in data:
+  #ans_data={
+ # "user_detail":data
+ 
+    #print data.name
+    return HttpResponse(serializers.serialize("json", [User.objects.get(p_id=25)]))
+
+def expenseparticipent(request,participant):
+Person..raw('SELECT * FROM myapp_person WHERE last_name = %s', [lname])
+
+
+

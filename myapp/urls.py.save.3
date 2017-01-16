@@ -1,0 +1,31 @@
+
+/
+from django.conf.urls import url
+
+from . import views
+import myapp.views
+from myapp import views
+urlpatterns = [
+        url(r'^hell/(?P<id>\d+)/', views.hello, name='hello'),
+#       url(r'^otp/', views.hell, name='hell'),
+        url(r'^test/(?P<store_id>\d+)/',views.test),
+        #url(r'^send1/(?P<store_id>\d+)/',views.detaill),                      #GET api example with parameter
+#       url(r'^pt/$',views.det),                                 #post api example
+        url(r'^sendmessage.py/(?P<store_id>\d+)/(?P<message>.+)/',views.detaill),     #GET api example with  two parameter
+        url(r'^sendi/(?P<store_id>\d+)/',views.detaill3),
+        url(r'^user/', views.test, name='test'),
+       # url(r'^expense/(?p<user_data>\d+)/',views.expenseparticipent),
+        url(r'^api/(?P<mob_number>\d+)',views.API2),
+        url(r'^fcmapi/(?P<tokenid>.+)',views.FCMAPI),
+       # url(r'^fcmdata/(?P<tokenid>.+)',views.FCMAPI),
+        url(r'^fcmid1/(?P<message_title>.+)/(?P<message_body>.+)/', views.FCMDATA1, name='FCMDATA1'),
+        url(r'^fcmid/(?P<userNumber>.+)/(?P<orderID>.+)/(?P<merchantName>.+)/(?P<merchantNumber>.+)/(?P<userName>.+)/(?P<itemsList>.+)/(?P<netPrice>.+)/(?P<itemPrice>.+)/(?P<orderNo>.+)/(?P<status>.+)/(?P<available>.+)/(?P<amountItems>.+)/(?P<confreeStatus>.+)/(?P<ETA>.+)/(?P<category>.+)/(?P<date>.+)/(?P<merchantFcm>.+)/', views.FCMDATA, name='FCMDATA'),
+
+        url(r'^postapi/(?P<id>\d+)/', views.save_data),
+
+
+
+
+ ]
+
+

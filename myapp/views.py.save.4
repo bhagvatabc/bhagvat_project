@@ -1,0 +1,108 @@
+from django.shortcuts import render
+
+# Create your views here.
+from django.core import serializers
+from django.http import HttpResponse
+from django.shortcuts import render
+from django.shortcuts import render_to_response
+from myapp.models import *
+import myapp.views
+from myapp.views import *
+import json
+import simplejson
+import json as simplejson
+#import pyotp
+import os
+import sys
+from urllib2 import urlopen, HTTPError
+import urllib
+from urllib2 import Request, urlopen, URLError
+import requests
+from requests import *
+#from django.http import JsonResponse
+def hello(request):
+     a=5
+     b=6
+     if(a==5):
+       return HttpResponse("hello are you")
+     if(b==6):
+       return HttpResponse("welcome")
+    #return ('test.html')
+
+def detaill(request,store_id,message):
+
+ mobile_number = request.GET.get('', store_id)
+ #message = "Hello User, we are sorry that you faced issues with payments. It is resolved in our new update https://goo.gl/sX2Be5 #Letscontree"
+ message =request.GET.get('', message)
+ a= str(mobile_number)
+ print message
+ url = ("http://alerts.solutionsinfini.com/api/v3/index.php?method=sms&api_key=A2da30c3f0e3f933485c8a7545dcaf895&to="+mobile_number+"&sender=Contri&message="+message)
+#os.system('php -f url')
+ t =requests.get(url)
+ print t.text
+ print "messsage sent"
+ return HttpResponse("message sent on this number"+ " " +a)
+
+def detaill2(request,store_id,message):
+    mobile_number = request.GET.get('', store_id)
+    message =request.GET.get('', message)
+    print mobile_number
+    print message
+    d ={'mobile_number':mobile_number,'message':message}
+    a= json.dumps(d)
+    return HttpResponse(a)
+def test(request):
+   
+  #  data=  User.objects.all()
+   #for i in data:
+  #ans_data={
+ # "user_detail":data
+ 
+    #print data.name
+    return HttpResponse(serializers.serialize("json", [User.objects.get(p_id=25)]))
+
+#def expenseparticipent(request,user_data):
+def detaill3(request,store_id):
+ #  print store_id
+
+ #  print store_id
+  d= Expenseparticipants.objects.raw('SELECT * FROM Expenseparticipants WHERE participant = %s', [store_id])
+ # return HttpResponse(serializers.serialize("json",d))
+  d1=serializers.serialize("json",d,fields=('id','share','object','_created_at','_id','settled','_updated_at','participantname','participant','saved'))
+  print d1
+  d2 = json.loads(d1)
+  obj_data = (d2[0]["fields"]["object"])
+  print obj_data
+#  p1=str(d2[0]["fields"]["participant"])
+  c1= json.loads(json.dumps(d2[0]))
+ # return HttpResponse("json.dumps(c2),content_type=application/json")
+
+  if(obj_data!='other'):
+    # if(p1 ==store_id):
+
+ #  d3 = myapp_runningexpenses.objects.raw('SELECT * FROM myapp_runningexpenses WHERE id1 =%s', [obj_data])
+   d3 =Runningexpenses.objects.row('sele')
+   d4=serializers.serialize("json",d3,fields=('id','saved','agenda','name','contreemoney','date','_updated_at','_created_at','id1'))
+   print d4
+   d5 = json.loads(d4)
+   obj_data1 = (d5[0]["fields"]["id1"])
+   c2=json.loads(json.dumps(d5[0]))
+  #return HttpResponse(json.dumps(c2),content_type="application/json")
+     
+   if(obj_data1== obj_data):
+    d6 =Expensedetails.objects.filter(object = obj_data1) #78
+    d7=serializers.serialize("json",d6,fields=('id','_created_at','_id','description','_amount','_updated_at','object','addedby','shares','persons','distribution','own'))
+    d8 = json.loads(d7)
+    c3=json.loads(json.dumps(d8[0]))#,content_type="application/json")
+
+  d9 = {'Expenseparticipants':c1,'Runningexpenses':c2,'Expensedetails.':c3}
+ # d10 = json.dumps(d9)
+  fd=(json.dumps(d9,indent=2))
+ # print fd
+  return HttpResponse(fd, content_type="application/json")
+ # else:
+  # print "number are not matches among three tables"
+
+#final_data
+
+

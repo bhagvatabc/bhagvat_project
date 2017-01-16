@@ -1,0 +1,421 @@
+from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
+from django.views.decorators.cache import cache_page
+from django.views.decorators.csrf import csrf_protect
+from django.http import StreamingHttpResponse
+from django.core.context_processors import csrf
+from django.http import HttpResponseRedirect
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.views.decorators.csrf import csrf_exempt, csrf_protect
+# Create your views here.
+from django.core import serializers
+from django.http import HttpResponse
+from django.shortcuts import render
+from django.shortcuts import render_to_response
+from myapp.models import *
+import myapp.views
+from myapp.views import *
+import json
+from django.db.models import F
+import simplejson
+import json as simplejson
+import os
+import sys
+from urllib2 import urlopen, HTTPError
+import urllib
+from urllib2 import Request, urlopen, URLError
+import requests
+from requests import *
+from django.http import HttpResponse, HttpRequest, HttpResponseRedirect
+from django.http import JsonResponse
+from django.db.models import Q
+import operator
+import dpath.util
+import random
+import csv
+import string
+from pyfcm import FCMNotification
+
+@csrf_exempt
+def merchantOfringAPI(request):
+ return HttpResponse(json.dumps({"merchant_data":json.loads(serializers.serialize("json",[Merchant.objects.get(number=json.loads(request.body)["merchantNumber"]),]))[0]["fields"]}),content_type="application/json")
+ 
+def addOrderObject(order):
+ di = Expensedetails.objects.get_or_create(defaults = data,id1=data["id1"],expenseVersion = data["expenseVersion"],object__contains = data["object"].split("##")[0])
+d 
+@csrf_exempt
+def getUserOrderAPI(request):
+ data = json.loads(request.body)
+ status=data["status"]
+ userNumber=data["userNumber"]
+ orderIDList = data["orderIDList"]
+ idQuery = reduce(operator.or_,(Q(orderid = orderid)for orderid in orderIDList))
+ userorder_data=Userorder.objects.filter(idQuery,status=status,usernumber=userNumber)
+ userorder_data = json.loads(serializers.serialize("json",userorder_data))[0]["fields"]
+ c1={"userorder_data":[userorder_data]} 
+ return HttpResponse(json.dumps(c1),content_type="application/json")
+
+
+def getdynamicValue():
+ return json.loads(serializers.serialize("json",DynamicValue.objects.all()))[0]["fields"]
+
+@csrf_exempt
+def updateDynamicValue(request):
+ data = json.loads(request.body)
+ if(data["password"]=="Lets89308805786"):
+  body = data["body"]
+  print body
+  if(body["identifier"]=="contree789"):
+   p = DynamicValue.objects.update_or_create(defaults = body,identifier=body["identifier"])
+   c1={"status":"success","message":"updated successfully","dynamicValue":json.loads(serializers.serialize("json",[p[0],]))[0]["fields"]}
+  else:
+   c1={"status":"error","message":"Incorrect identifier"}
+ else:
+  c1={"status":"error","message":"Incorrect password"}
+ return HttpResponse(json.dumps(c1),content_type="application/json")
+
+@csrf_exempt
+def sync(request):
+ syncExpenses(json.loads(request.body)["syncList"])
+ return HttpResponse("ok")
+
+@csrf_exempt
+def getAllMerchantsAPI(request):
+ merchants = json.loads(serializers.serialize("json",Merchant.objects.filter(isVerified = "yes", status = "1")))
+ finalMerchants = []
+ for merchant in merchants:
+  finalMerchants.append(merchant["fields"])
+ c1={"status":"success","merchants":finalMerchants,"count":len(finalMerchants)}
+ return HttpResponse(json.dumps(c1),content_type="application/json")
+
+def syncExpenses(syncList):
+ for entry in syncList:
+  Expensedetails.objects.update_or_create(defaults = entry,id1 = entry["id1"], object__contains = entry["object"].split("##")[0], expenseVersion = entry["expenseVersion"])
+
+def connectFCM(title,body,idsList):
+ push_service = FCMNotification(api_key="AIzaSyAyr0ors7D1lVnhescbztbu7Z8F1pKqwEw", proxy_dict="https://fcm.googleapis.com/fcm/send")
+ result = push_service.notify_multiple_devices(registration_ids=idsList, message_title=title, message_body=body)
+ print result
+ return result
+
+def sendRemindMessage(name,number,amount):
+ message = "Your friend " + name + " asked you to pay Rs " + amount + " on Contree. Download from https://goo.gl/sX2Be5 #ShareExpenses"
+ return connectMessage(number,message)
+
+def sendOTPMessage(otp,number):
+ message =  otp + " is One Time Password (OTP) for your Contree login verification. Please do not share it with anyone. WelcomeBack"
+ return connectMessage(number,message)
+
+@csrf_exempt
+def sendPushNotification(request):
+ data = json.loads(request.body)
+ notification=data["notification"]
+ 
+ if (data["password"] == "Lets89308805786"):
+  fcmTokenList =[x.encode("utf-8")for x in User.objects.all().values_list('fcmToken',flat=True)]
+  subLists = [fcmTokenList[i:i+2000] for i in range(0,len(fcmTokenList),2000)]
+  counter = 0
+  for subList in subLists:
+   counter = counter + int(connectFCM("pushNotification",notification,subList)["success"])
+  c1={"status":"success","message":"Notifications sent successfully","TotalUsers":User.objects.all().count(),"NotificationsSent":counter}
+  Pushnotification.objects.update_or_create(defaults = notification,notificationID = notification["notificationID"])
+ else:
+  c1={"status":"error","message":"Incorrect password"}
+ return HttpResponse(json.dumps(c1),content_type="application/json")
+
+def connectMessage(number,message):
+ url = ("http://alerts.solutionsinfini.com/api/v3/index.php?method=sms&api_key=A2da30c3f0e3f933485c8a7545dcaf895&to="+number+"&sender=Contri&message="+message)
+ return json.loads(requests.get(url).text)["status"]
+ 
+@csrf_exempt
+def deleteUser(request):
+  number = json.loads(request.body)["number"]
+  querySet = User.objects.filter(number = number)
+  if (querySet.count() == 0):
+   c1={"status":"error","message":"User does not exist"}
+  else:
+   querySet.delete()
+   c1={"status":"success","message":"User deleted"}
+  return HttpResponse(json.dumps(c1),content_type="application/json")
+
+@csrf_exempt
+def deleteExpense(request):
+  data = json.loads(request.body)
+  id1 = data["id1"]
+  object = data["object"].split("##")[0]
+  expenseVersion = data["expenseVersion"]
+  querySet = Expensedetails.objects.filter(id1 = id1, object__contains = object, expenseVersion = expenseVersion)
+  if (querySet.count() == 0):
+   c1={"status":"error","message":"Expense does not exist2"}
+  else:
+   querySet.delete()
+   c1={"status":"success","message":"Expense deleted"}
+  return HttpResponse(json.dumps(c1),content_type="application/json")
+
+@csrf_exempt
+def deleteAllExpenses(request):
+  data = json.loads(request.body)
+  if (data["password"] == "Lets89308805786"):
+   querySet = Expensedetails.objects.all()
+   if (querySet.count() == 0):
+    c1={"status":"error","message":"Expenses do not exist"}
+   else:
+    querySet.delete()
+    c1={"status":"success","message":"Expenses deleted"}
+  return HttpResponse(json.dumps(c1),content_type="application/json")
+
+@csrf_exempt
+def DeleteExpenseAllVersions(request):
+  data = json.loads(request.body)
+  id1 = data["id1"]
+  object = data["object"].split("##")[0]
+  querySet = Expensedetails.objects.filter(id1 =id1 , object__contains = object )
+  if (querySet.count() == 0):
+   c1={"status":"error","message":"Expense does not exist1"}
+  else:
+   querySet.delete()
+   c1={"status":"success","message":"Expense deleted"}
+  return HttpResponse(json.dumps(c1),content_type="application/json")
+
+@csrf_exempt
+def remindAPI(request):
+ comingJson = json.loads(request.body)
+ memberList = comingJson["memberList"]
+ whoRemindedName = comingJson["userName"]
+ whoRemindedNumber = comingJson["userNumber"]
+ numberList =[]
+ for member in memberList:
+  numberList.append(member["number"])
+ 
+ idQuery = reduce(operator.or_,(Q(number = number)for number in numberList))
+ users =  User.objects.filter(idQuery)
+ users = json.loads(serializers.serialize("json",users)) 
+ userList = []
+ savedNumberList = []
+ for user in users:
+  user2 = (user)["fields"]
+  userList.append(user2)
+  savedNumberList.append(user2["number"])
+ 
+ counter = 0
+ for member in memberList:
+   requestNumber = member["number"]
+   amount = member["amount"]
+   if (requestNumber not in savedNumberList):
+    result =  sendRemindMessage(whoRemindedName,requestNumber,amount)
+    if (result == "OK"):
+     counter = counter + 1 
+   else:
+    for user in userList:
+     if (user["number"] == requestNumber): 
+      tokenValue = user["fcmToken"]
+    fcmList = []
+    fcmList.append(tokenValue)
+    fcmList =[x.encode("utf-8")for x in fcmList]
+    message = " asked you to pay Rs " + amount
+    body = {"message":message,"whoRemindedName":whoRemindedName,"whoRemindedNumber":whoRemindedNumber}
+    result = connectFCM("remind", body, fcmList)
+    if (result["success"] == 1):
+     counter = counter + 1
+ 
+ if (counter == 0):
+  c1={"status":"error","message":"Could not send reminders. Try later"}
+ else:
+  c1={"status":"success","message":"Reminders sent successfully","count":counter}
+ return HttpResponse(json.dumps(c1),content_type="application/json")
+
+def sendFCMorMessage(numberList,fcmTitle,fcmBody,messageBody):
+ idQuery = reduce(operator.or_,(Q(number = number)for number in numberList))
+ users =  User.objects.filter(idQuery)
+ users = json.loads(serializers.serialize("json",users))
+ userList = []
+ savedNumberList = []
+ for user in users:
+  user2 = (user)["fields"]
+  userList.append(user2)
+  savedNumberList.append(user2["number"])
+ counter = 0
+ fcmList = []
+ for number in numberList:
+   if (number not in savedNumberList):
+    connectMessage(number,messageBody)
+   else:
+    for user in userList:
+     if(user["number"] == number):
+      fcmList.append(user["fcmToken"])
+ fcmList =[x.encode("utf-8")for x in fcmList]
+ connectFCM(fcmTitle, fcmBody, fcmList)
+
+@csrf_exempt
+def verifyReferralAPI(request):
+ print "inside api call"
+ print request.method
+ data= request.body
+ data = json.loads(data)
+ referralInput=data["referralInput"]
+ mobile_number = data["userNumber"]
+ print data
+ count  = User.objects.filter(referralCode = referralInput).count()
+ if (count > 0):
+   user = User.objects.filter(referralCode = referralInput)
+   userJson = serializers.serialize("json",user)
+   userJson = json.loads(userJson)[0]["fields"]
+   referredFromName = userJson["name"]
+   referredFromNumber = userJson["number"]
+   referralCount = int(userJson["referralCount"])
+   referralCount = referralCount + 1
+   User.objects.filter(referralCode = referralInput).update(referralCount = referralCount)
+   
+   referredFromString = referredFromName + ":" + referredFromNumber
+   User.objects.filter(number = mobile_number).update(referredFrom = referredFromString) 
+   cuser = User.objects.filter(number = mobile_number)
+   cuserJson = serializers.serialize("json",cuser)
+   cuserJson = json.loads(cuserJson)[0]["fields"]  
+   c1={"status":"success","message":"Referral successful","user":cuserJson}
+ else: 
+   c1={"status":"error","message":"Invalid referral"}
+ return HttpResponse(json.dumps(c1),content_type="application/json")
+
+@csrf_exempt
+def updateUserAPI(request):
+ data = json.loads(request.body)
+ p=User.objects.update_or_create(defaults= data ,number = data["number"])
+ UserJson = json.loads(serializers.serialize("json",[p[0],]))[0]["fields"]
+ if(p[1]==False):
+  c1={"status":"success","message":"User updated successfully","user":UserJson}
+ else:
+  p[0].delete()
+  c1={"status":"error","message":"User does not exist"}
+ return HttpResponse(json.dumps(c1),content_type="application/json")
+ 
+@csrf_exempt
+def sendOTPMessageAPI(request):
+ data = json.loads(request.body)
+ print data
+ mobile_number=data["mobileNumber"]
+ otpRow={"mobileNumber":mobile_number,"otp":random.randint(100000,999999)}
+ d2 = Otp.objects.get_or_create(defaults=otpRow, mobileNumber = mobile_number)
+ otp = json.loads(serializers.serialize("json",[d2[0],]))[0]["fields"]["otp"]
+ if(sendOTPMessage(str(otp),mobile_number) == "OK"):
+  c1={"status":"success","message":"otp message sent successfully"}
+ else:
+  c1={"status":"error","message":"message not sent"}
+ return HttpResponse(json.dumps(c1),content_type="application/json")
+
+@csrf_exempt
+def verifyOTPMessageAPI(request):
+ data = json.loads(request.body)
+ mobile_number=data["userNumber"]
+ userType=data["userType"]
+ fcmToken = data["fcmToken"]
+ otpObject = Otp.objects.get(mobileNumber = mobile_number)
+ if(data["otpInput"]==otpObject.otp):
+  if(userType==sult == "OK"):
+     counter = counter + 1 
+   else:
+    for user in userList:
+     if (user["number"] == requestNumber): 
+      tokenValue = user["fcmToken"]
+    fcmList = []
+    fcmList.append(tokenValue)
+    fcmList =[x.encode("utf-8")for x in fcmList]
+    message = " asked you to pay Rs " + amount
+    body = {"message":message,"whoRemindedName":whoRemindedName,"whoRemindedNumber":whoRemindedNumber}
+    result = connectFCM("remind", body, fcmList)
+    if (result["success"] == 1):
+     counter = counter + 1
+ 
+ if (counter == 0):
+  c1={"status":"error","message":"Could not send reminders. Try later"}
+ else:
+  c1={"status":"success","message":"Reminders sent successfully","count":counter}
+ return HttpResponse(json.dumps(c1),content_type="application/json")
+
+def sendFCMorMessage(numberList,fcmTitle,fcmBody,messageBody):
+ idQuery = reduce(operator.or_,(Q(number = number)for number in numberList))
+ users =  User.objects.filter(idQuery)
+ users = json.loads(serializers.serialize("json",users))
+ userList = []
+ savedNumberList = []
+ for user in users:
+  user2 = (user)["fields"]
+  userList.append(user2)
+  savedNumberList.append(user2["number"])
+ counter = 0
+ fcmList = []
+ for number in numberList:
+   if (number not in savedNumberList):
+    connectMessage(number,messageBody)
+   else:
+    for user in userList:
+     if(user["number"] == number):
+      fcmList.append(user["fcmToken"])
+ fcmList =[x.encode("utf-8")for x in fcmList]
+ connectFCM(fcmTitle, fcmBody, fcmList)
+
+@csrf_exempt
+def verifyReferralAPI(request):
+ print "inside api call"
+ print request.method
+ data= request.body
+ data = json.loads(data)
+ referralInput=data["referralInput"]
+ mobile_number = data["userNumber"]
+ print data
+ count  = User.objects.filter(referralCode = referralInput).count()
+ if (count > 0):
+   user = User.objects.filter(referralCode = referralInput)
+   userJson = serializers.serialize("json",user)
+   userJson = json.loads(userJson)[0]["fields"]
+   referredFromName = userJson["name"]
+   referredFromNumber = userJson["number"]
+   referralCount = int(userJson["referralCount"])
+   referralCount = referralCount + 1
+   User.objects.filter(referralCode = referralInput).update(referralCount = referralCount)
+   
+   referredFromString = referredFromName + ":" + referredFromNumber
+   User.objects.filter(number = mobile_number).update(referredFrom = referredFromString) 
+   cuser = User.objects.filter(number = mobile_number)
+   cuserJson = serializers.serialize("json",cuser)
+   cuserJson = json.loads(cuserJson)[0]["fields"]  
+   c1={"status":"success","message":"Referral successful","user":cuserJson}
+ else: 
+   c1={"status":"error","message":"Invalid referral"}
+ return HttpResponse(json.dumps(c1),content_type="application/json")
+
+@csrf_exempt
+def updateUserAPI(request):
+ data = json.loads(request.body)
+ p=User.objects.update_or_create(defaults= data ,number = data["number"])
+ UserJson = json.loads(serializers.serialize("json",[p[0],]))[0]["fields"]
+ if(p[1]==False):
+  c1={"status":"success","message":"User updated successfully","user":UserJson}
+ else:
+  p[0].delete()
+  c1={"status":"error","message":"User does not exist"}
+ return HttpResponse(json.dumps(c1),content_type="application/json")
+ 
+@csrf_exempt
+def sendOTPMessageAPI(request):
+ data = json.loads(request.body)
+ print data
+ mobile_number=data["mobileNumber"]
+ otpRow={"mobileNumber":mobile_number,"otp":random.randint(100000,999999)}
+ d2 = Otp.objects.get_or_create(defaults=otpRow, mobileNumber = mobile_number)
+ otp = json.loads(serializers.serialize("json",[d2[0],]))[0]["fields"]["otp"]
+ if(sendOTPMessage(str(otp),mobile_number) == "OK"):
+  c1={"status":"success","message":"otp message sent successfully"}
+ else:
+  c1={"status":"error","message":"message not sent"}
+ return HttpResponse(json.dumps(c1),content_type="application/json")
+
+@csrf_exempt
+def verifyOTPMessageAPI(request):
+ data = json.loads(request.body)
+ mobile_number=data["userNumber"]
+ userType=data["userType"]
+ fcmToken = data["fcmToken"]
+ otpObject = Otp.objects.get(mobileNumber = mobile_number)
+ if(data["otpInput"]==otpObject.otp):
+  if(userType==
