@@ -39,12 +39,10 @@ from pyfcm import FCMNotification
 from rest_framework.authtoken.models import Token#new
 from rest_framework.decorators import api_view#new
 import smtplib
-#2017
 @api_view(['POST','GET'])
 @csrf_exempt
 def test(request):
  data = json.loads(request.body)
- #python
  return HttpResponse("done")
 #
 
@@ -194,22 +192,15 @@ def addMerchantOfferingAPI(request):
 
 @api_view(['POST','GET'])
 @csrf_exempt
-def getUserOrdersAPI(request):
+def refreshLiveOrdersUserAPI(request):
  data = json.loads(request.body)
  userNumber=data["userNumber"]
  orderIDList = data["orderIDList"]
- print orderIDList
- idQuery = reduce(operator.or_,(Q(orderID = orderid)for orderid in orderIDList))
- print idQuery
- userorder_data = Userorder.objects.filter(idQuery,userNumber=userNumber).exclude(status = "-1")
- userorder_data = json.loads(serializers.serialize("json",userorder_data))
+ userorder_data = json.loads(serializers.serialize("json",Userorder.objects.filter(orderID__in = orderIDList,userNumber=userNumber).exclude(status = "-1")))
  ordersArray = []
  for order in userorder_data:
   ordersArray.append(order["fields"])
- if (len(ordersArray) > 0):
-   c1={"orders":ordersArray,"status":"success","count":len(ordersArray)}
- else:
-   c1={"message":"no orders found","status":"error"}
+ c1={"orders":ordersArray,"status":"success","count":len(ordersArray)}
  return HttpResponse(json.dumps(c1),content_type="application/json")
 
 def getdynamicValue():
@@ -646,11 +637,17 @@ def updateOrderMerchantAPI(request):
   c1={"status":"success","message":"Order updated successfully","order":OrderJson}
   connectFCM("orderUpdate",order,getFCMTokenListOrder(order,"user"),"no")
   if (order["status"] == "0"):
-    connectFCMHelper("Order",order,getFCMTokenListOrder(order,"helpers:dircetlySee_yes"),"no")
+    helperTokens = getFCMTokenListOrder(order,"helpers:dircetlySee_yes")
+    if(len(helperTokens)> 0):
+      connectFCMHelper("Order",order,helperTokens,"no")
   elif (order["status"] == "1"):
-    connectFCMHelper("Order",order,getFCMTokenListOrder(order,"helpers"),"no")
+    helperTokens = getFCMTokenListOrder(order,"helpers")
+    if(len(helperTokens)> 0):
+      connectFCMHelper("Order",order,helperTokens,"no")
   elif (order["status"] == "2"):
-    connectFCMHelper("orderRemove",order,getFCMTokenListOrder(order,"helpers"),"yes")
+    helperTokens = getFCMTokenListOrder(order,"helpers")
+    if(len(helperTokens)> 0):
+      connectFCMHelper("Order",order,helperTokens,"no")
  else:
   p[0].delete()
   c1={"status":"error","message":"Order does not exist"}
@@ -714,7 +711,9 @@ def updateOrderUserAPI(request):
  if(p[1]==False):
   c1={"status":"success","message":"Order updated successfully","order":OrderJson}
   connectFCMMerchant("orderRemove",order,getFCMTokenListOrder(order,"merchant"),"yes")
-  connectFCMHelper("orderRemove",order,getFCMTokenListOrder(order,"helpers"),"yes")
+  helperFCMTokens = getFCMTokenListOrder(order,"helpers")
+  if(len(helperFCMTokens) > 0):
+    connectFCMHelper("orderRemove",order,helperFCMTokens,"yes")
  else:
   p[0].delete()
   c1={"status":"error","message":"Order does not exist"}
