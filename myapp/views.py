@@ -44,6 +44,7 @@ import smtplib
 @csrf_exempt
 def test(request):
  data = json.loads(request.body)
+ #python
  return HttpResponse("done")
 #
 
